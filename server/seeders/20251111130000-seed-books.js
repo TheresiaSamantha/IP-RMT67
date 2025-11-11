@@ -2,6 +2,8 @@
 
 const axios = require("axios");
 
+require("dotenv").config();
+
 module.exports = {
   async up(queryInterface, Sequelize) {
     const API_KEY = process.env.GOOGLE_API_KEY;
@@ -12,15 +14,18 @@ module.exports = {
 
     // Google Books API: maxResults per request is 40. We'll fetch 40 + 10 = 50 total.
     const fetchChunk = async (startIndex, maxResults) => {
-      const url = `https://www.googleapis.com/books/v1/volumes?q=&orderBy=newest&startIndex=${startIndex}&maxResults=${maxResults}&key=${API_KEY}`;
+      const url = `https://www.googleapis.com/books/v1/volumes?q={keyword}&orderBy=newest&startIndex=${startIndex}&maxResults=${maxResults}&key=${API_KEY}`;
       const res = await axios.get(url);
       return res.data.items || [];
     };
 
-    const items1 = await fetchChunk(0, 40);
-    const items2 = await fetchChunk(40, 10);
-
-    const all = items1.concat(items2).slice(0, 50);
+    const all = [];
+    let startIndex = 0;
+    while (all.length < 50) {
+      const moreItems = await fetchChunk(startIndex, 40);
+      all.push(...moreItems);
+      startIndex += 40;
+    }
 
     all.forEach((i) => {
       const info = i.volumeInfo || {};
@@ -30,7 +35,6 @@ module.exports = {
         coverUrl: info.imageLinks
           ? info.imageLinks.thumbnail || info.imageLinks.smallThumbnail
           : null,
-        description: info.description || info.subtitle || null,
         category: (info.categories || []).join(", "),
         createdAt: now,
         updatedAt: now,
