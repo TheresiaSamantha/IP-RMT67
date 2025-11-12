@@ -10,19 +10,41 @@ class Controller {
     }
   }
 
-  static async OpenAi(req, res, next) {
-    try {
-      const result = await openaiAPI("write a haiku about ai");
-      res.status(200).json({ message: result });
-    } catch (error) {
-      next(error);
-    }
-  }
+  // static async OpenAi(req, res, next) {
+  //   try {
+  //     const result = await openaiAPI("write a haiku about ai");
+  //     res.status(200).json({ message: result });
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // }
 
   static async getBooks(req, res, next) {
     try {
-      const books = await Book.findAll();
-      res.status(200).json(books);
+      // Pagination: use query params `page` and `limit` (optional)
+      // Example: /books?page=2&limit=20
+      const page = Math.max(Number(req.query.page) || 1, 1);
+      const limit = Math.max(Number(req.query.limit) || 10, 1);
+      const offset = (page - 1) * limit;
+
+      const result = await Book.findAndCountAll({
+        limit,
+        offset,
+        order: [["id", "DESC"]],
+      });
+
+      const total = result.count;
+      const totalPages = Math.ceil(total / limit) || 1;
+
+      res.status(200).json({
+        data: result.rows,
+        meta: {
+          total,
+          page,
+          perPage: limit,
+          totalPages,
+        },
+      });
     } catch (error) {
       next(error);
     }

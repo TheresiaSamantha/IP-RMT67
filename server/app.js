@@ -21,7 +21,7 @@ app.use(express.json());
 app.get("/", Controller.home);
 app.get("/books", Controller.getBooks);
 app.get("/books/:id", Controller.getDetailBook);
-app.get("/openai", Controller.OpenAi);
+// app.get("/openai", Controller.OpenAi);
 app.post("/register", UserController.register);
 app.post("/login", UserController.login);
 
