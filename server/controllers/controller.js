@@ -1,30 +1,30 @@
 const openaiAPI = require("../helpers/openAi");
 
 class Controller {
-  static async home(req, res) {
+  static async home(req, res, next) {
     try {
-      res.status(200).json({ message: "Welcome to the Home Page" });
+      res.status(200).json({ message: "Server is running" });
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      next(error);
     }
   }
 
-  static async OpenAi(req, res) {
+  static async OpenAi(req, res, next) {
     try {
       const result = await openaiAPI("write a haiku about ai");
       res.status(200).json({ message: result });
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      next(error);
     }
   }
 
-  static async getBooks(req, res) {
+  static async getBooks(req, res, next) {
     try {
       const { Book } = require("../models");
       const books = await Book.findAll();
       res.status(200).json(books);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      next(error);
     }
   }
 }

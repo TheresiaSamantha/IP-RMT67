@@ -24,7 +24,6 @@ module.exports = async function authentication(req, res, next) {
 
     //*Kita cek ke db apakah user tersebut masih ada atau tidak
     const user = await User.findByPk(data.id);
-    console.log(user, "Tidak ada User");
     if (!user) {
       next(new Unathorized("Invalid token"));
       return;
@@ -33,8 +32,6 @@ module.exports = async function authentication(req, res, next) {
     req.user = user;
     next();
   } catch (err) {
-    console.log("err:", err);
-
     if (err.name === "JsonWebTokenError") {
       next(new Unathorized("Invalid token"));
     } else {
