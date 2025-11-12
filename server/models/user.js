@@ -1,4 +1,6 @@
 "use strict";
+// hash password form folder helpers/bcrypt.js
+const { hashPassword } = require("../helpers/bcrypt");
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
@@ -28,5 +30,10 @@ module.exports = (sequelize, DataTypes) => {
       modelName: "User",
     }
   );
+  // ensure we await the async hashPassword helper so password is a string, not a Promise
+  User.beforeCreate(async (user) => {
+    const hash = await hashPassword(user.password);
+    user.password = hash;
+  });
   return User;
 };

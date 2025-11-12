@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 
-const SALT_ROUNDS = parseInt(process.env.BCRYPT_SALT_ROUNDS, 10) || 10;
+const SALT_ROUNDS = Number(process.env.SALT_ROUNDS) || 10;
 
 async function hashPassword(plain) {
   if (!plain) throw new Error("Password is required for hashing");
