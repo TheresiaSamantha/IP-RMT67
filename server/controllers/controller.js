@@ -1,4 +1,5 @@
 const openaiAPI = require("../helpers/openAi");
+const { Book } = require("../models");
 
 class Controller {
   static async home(req, res, next) {
@@ -20,9 +21,21 @@ class Controller {
 
   static async getBooks(req, res, next) {
     try {
-      const { Book } = require("../models");
       const books = await Book.findAll();
       res.status(200).json(books);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getDetailBook(req, res, next) {
+    try {
+      const { id } = req.params;
+      const book = await Book.findByPk(id);
+      if (!book) {
+        return res.status(404).json({ message: "Book not found" });
+      }
+      res.status(200).json(book);
     } catch (error) {
       next(error);
     }

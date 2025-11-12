@@ -36,6 +36,7 @@ module.exports = {
           ? info.imageLinks.thumbnail || info.imageLinks.smallThumbnail
           : null,
         category: (info.categories || []).join(", "),
+        description: info.description || "No description available.",
         createdAt: now,
         updatedAt: now,
       });
