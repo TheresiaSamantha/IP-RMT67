@@ -1,16 +1,13 @@
 const { OpenAI } = require("openai");
+const client = new OpenAI({
+  apiKey: process.env.OpenAI_API_KEY,
+});
 
-function description(inputText) {
-  const openai = new OpenAI({
-    apiKey: process.env.OpenAI_API_KEY,
-  });
-
-  const response = openai.responses.create({
+module.exports = async function openaiAPI(prompt) {
+  const response = await client.responses.create({
     model: "gpt-5-nano",
-    input: "write a haiku about ai",
-    //   store: true,
+    input: prompt,
   });
-  return response;
-}
 
-module.exports = { description };
+  return response.output_text;
+};
