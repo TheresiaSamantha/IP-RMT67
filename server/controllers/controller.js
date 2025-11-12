@@ -35,6 +35,17 @@ class Controller {
       if (!book) {
         return res.status(404).json({ message: "Book not found" });
       }
+      if (!book.aiSummary) {
+        const aiSummary = await openaiAPI(
+          `Provide a brief summary for the book titled "${book.title}" by ${book.author}.`
+        );
+        book.aiSummary = aiSummary;
+        console.log(
+          "🚀 ~ Controller ~ getDetailBook ~ book.aiSummary:",
+          book.aiSummary
+        );
+        await book.update({ aiSummary });
+      }
       res.status(200).json(book);
     } catch (error) {
       next(error);
