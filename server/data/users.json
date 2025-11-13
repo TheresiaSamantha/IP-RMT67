@@ -1,0 +1,27 @@
+[
+  {
+    "userName": "admin_alice",
+    "email": "alice.admin@example.com",
+    "password": "AdminPass!23"
+  },
+  {
+    "userName": "bob",
+    "email": "bob.user@example.com",
+    "password": "password123"
+  },
+  {
+    "userName": "carol",
+    "email": "carol.user@example.com",
+    "password": "password123"
+  },
+  {
+    "userName": "dave",
+    "email": "dave.user@example.com",
+    "password": "password123"
+  },
+  {
+    "userName": "eve",
+    "email": "eve.user@example.com",
+    "password": "password123"
+  }
+]

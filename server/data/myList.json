@@ -1,0 +1,31 @@
+[
+  { "UserId": 1, "BookId": 1, "note": "Loved the narrative" },
+  { "UserId": 1, "BookId": 2, "note": "" },
+  { "UserId": 1, "BookId": 3, "note": "Highly recommend" },
+  { "UserId": 1, "BookId": 4, "note": "" },
+  { "UserId": 1, "BookId": 5, "note": "For book club" },
+
+  { "UserId": 2, "BookId": 6, "note": "" },
+  { "UserId": 2, "BookId": 7, "note": "Interesting premise" },
+  { "UserId": 2, "BookId": 8, "note": "" },
+  { "UserId": 2, "BookId": 9, "note": "Riveting" },
+  { "UserId": 2, "BookId": 10, "note": "" },
+
+  { "UserId": 3, "BookId": 11, "note": "Must read" },
+  { "UserId": 3, "BookId": 12, "note": "" },
+  { "UserId": 3, "BookId": 13, "note": "Thought-provoking" },
+  { "UserId": 3, "BookId": 14, "note": "" },
+  { "UserId": 3, "BookId": 15, "note": "Classic" },
+
+  { "UserId": 4, "BookId": 16, "note": "" },
+  { "UserId": 4, "BookId": 17, "note": "Great worldbuilding" },
+  { "UserId": 4, "BookId": 18, "note": "" },
+  { "UserId": 4, "BookId": 19, "note": "Timeless" },
+  { "UserId": 4, "BookId": 20, "note": "" },
+
+  { "UserId": 5, "BookId": 21, "note": "Short and uplifting" },
+  { "UserId": 5, "BookId": 22, "note": "" },
+  { "UserId": 5, "BookId": 23, "note": "Emotional" },
+  { "UserId": 5, "BookId": 24, "note": "" },
+  { "UserId": 5, "BookId": 25, "note": "Thrilling" }
+]
