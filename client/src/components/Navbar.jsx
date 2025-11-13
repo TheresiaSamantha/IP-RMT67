@@ -33,7 +33,7 @@ const Navbar = () => {
         zIndex: 1000,
       }}
     >
-      <div style={{ fontWeight: 700 }}>Book Recommender</div>
+      <div style={{ fontWeight: 700 }}>Book Review</div>
       <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
         <Link to="/">Home</Link>
         {token ? (

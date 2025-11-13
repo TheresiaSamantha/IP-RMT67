@@ -60,5 +60,36 @@ class ControllerUser {
       next(err);
     }
   }
+  static async googleLogin(req, res, next) {
+    // Menerima token dari fron end
+    const token = req.body.googleAccessToken;
+
+    try {
+      const ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: process.env.GOOGLE_CLIENT_ID, // diambil di .env
+      });
+      const payload = ticket.getPayload();
+
+      // dengan google login, kita biarkan user tidak perlu register
+      let user = await User.findOne({ where: { email: payload.email } });
+
+      if (!user) {
+        const password = Math.random().toString(36).slice(-256);
+        console.log(password, "<<< pwd");
+        user = await User.create({
+          name: payload.name,
+          email: payload.email,
+          // kalo pake google login, RANDOM SE RANDOM MUNGKIN
+          password,
+        });
+      }
+
+      const access_token = signToken({ id: user.id });
+      res.json({ access_token });
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 module.exports = ControllerUser;

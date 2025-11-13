@@ -24,6 +24,7 @@ app.get("/books/:id", Controller.getDetailBook);
 // app.get("/openai", Controller.OpenAi);
 app.post("/register", UserController.register);
 app.post("/login", UserController.login);
+app.post("/login/google", UserController.googleLogin);
 
 app.use(authentication);
 
