@@ -8,6 +8,8 @@ import Footer from "./components/Footer";
 import HomePage from "./pages/Home.page.jsx";
 import MyListPage from "./pages/MyList.page.jsx";
 import Detail from "./pages/Detail.page.jsx";
+import LoginPage from "./pages/login.page.jsx";
+import ResisterPage from "./pages/resister.page.jsx";
 
 // layout component to wrap pages with navbar and footer
 function Layout() {
@@ -27,6 +29,8 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
           <Route path="/mylist" element={<MyListPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/resister" element={<ResisterPage />} />
           <Route path=":bookId" element={<Detail />} />
         </Route>
       </Routes>
