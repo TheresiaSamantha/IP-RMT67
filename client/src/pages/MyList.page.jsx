@@ -39,7 +39,7 @@ const MyListPage = () => {
         >
           {myList.map((item) => (
             <div key={item.id}>
-              <BookCard book={item.Book ?? item} />
+              <BookCard book={item.Book ?? item} showAdd={false} />
               <div style={{ marginTop: 8 }}>
                 <button onClick={() => handleRemove(item.id)}>Remove</button>
               </div>

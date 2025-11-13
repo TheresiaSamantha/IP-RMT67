@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router";
 import BookCard from "../components/BookCard";
 import BookDetailModal from "../components/BookDetailModal";
 import { fetchBooks } from "../features/bookSlice";
@@ -8,6 +9,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 const HomePage = () => {
   const dispatch = useDispatch();
   const { items, meta, status, error } = useSelector((s) => s.books);
+  const token = useSelector((s) => s.user.token);
   const [selected, setSelected] = useState(null);
 
   // initial load
@@ -32,6 +34,22 @@ const HomePage = () => {
       <p style={{ color: "#666", marginBottom: 16 }}>
         Explore our collection. Click a book to see details.
       </p>
+      {!token && (
+        <div
+          style={{
+            background: "#f6f8ff",
+            border: "1px solid #dfe6ff",
+            padding: 12,
+            borderRadius: 8,
+            marginBottom: 16,
+            color: "#334",
+          }}
+        >
+          <span>Want to build your reading list? </span>
+          <Link to="/login">Login</Link>
+          <span> to save books to My List.</span>
+        </div>
+      )}
 
       {status === "loading" && <p>Loading books…</p>}
       {status === "failed" && <p style={{ color: "crimson" }}>{error}</p>}
@@ -61,6 +79,7 @@ const HomePage = () => {
                 key={book.id ?? book.title}
                 book={book}
                 onOpen={setSelected}
+                showAdd={Boolean(token)}
               />
             ))}
           </div>

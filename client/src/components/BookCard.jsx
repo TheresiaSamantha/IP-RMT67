@@ -3,7 +3,7 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { addToMyList } from "../features/myListSlice";
 
-const BookCard = ({ book = {}, onOpen }) => {
+const BookCard = ({ book = {}, onOpen, showAdd = true }) => {
   const { title, author, coverUrl } = book;
   const dispatch = useDispatch();
 
@@ -36,7 +36,7 @@ const BookCard = ({ book = {}, onOpen }) => {
       <p style={{ margin: "6px 0 12px", color: "#555" }}>{author}</p>
       <div style={{ display: "flex", gap: 8 }}>
         <button onClick={() => onOpen && onOpen(book)}>Details</button>
-        <button onClick={handleAdd}>Add</button>
+        {showAdd && <button onClick={handleAdd}>Add</button>}
       </div>
     </article>
   );
