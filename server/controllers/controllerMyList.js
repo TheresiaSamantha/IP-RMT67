@@ -97,26 +97,40 @@ class ControllerMyList {
   static async deleteFromMyList(req, res, next) {
     try {
       const userId = req.user && req.user.id;
+      console.log(
+        "🚀 ~ ControllerMyList ~ deleteFromMyList ~ req.user:",
+        req.user
+      );
       if (!userId)
         throw { name: "UnathorizedError", message: "User not authenticated" };
 
-      const id = Number(req.params.id);
-      // allow onlyUser to attach the item
+      const paramId = Number(req.params.id);
+
+      // Try to resolve the mylist item in a flexible way:
+      // 1) prefer req.myListItem (from onlyUser middleware)
+      // 2) treat param as MyList primary key (id)
+      // 3) if not found, treat param as BookId and look up by (UserId, BookId)
       let item = null;
       if (req && req.myListItem != null) {
         item = req.myListItem;
-      } else {
-        item = await MyList.findByPk(id);
       }
+      if (!item && Number.isInteger(paramId)) {
+        item = await MyList.findByPk(paramId);
+      }
+      if (!item && Number.isInteger(paramId)) {
+        item = await MyList.findOne({
+          where: { UserId: userId, BookId: paramId },
+        });
+      }
+
       if (!item) throw { name: "NotFound", message: "MyList item not found" };
       if (item.UserId !== userId)
         throw { name: "Forbidden", message: "Not allowed" };
-      //   console.log("🚀 ~ ControllerMyList ~ deleteFromMyList ~ item:", item);
 
-      await MyList.destroy({ where: { id: item.BookId } });
+      await MyList.destroy({ where: { id: item.id } });
       res.status(200).json({ message: "Removed from MyList" });
     } catch (err) {
-      //   console.log("🚀 ~ ControllerMyList ~ deleteFromMyList ~ err:", err);
+      console.log("🚀 ~ ControllerMyList ~ deleteFromMyList ~ err:", err);
       next(err);
     }
   }
