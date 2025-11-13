@@ -1,11 +1,17 @@
 import React, { useState } from "react";
+import { apiKey } from "../helpers/http-client";
 
 const BookDetailModal = ({ book, onClose }) => {
   const [summary, setSummary] = useState(null);
 
   const requestSummary = async () => {
-    // TODO: call POST /books/summarize with book data to get AI summary
-    setSummary("(AI summary placeholder)");
+    try {
+      const { data } = await apiKey.get(`/books/${book.id}`);
+      setSummary(data?.aiSummary || "No summary available.");
+    } catch (err) {
+      setSummary("Failed to load AI summary.");
+      console.error(err);
+    }
   };
 
   if (!book) return null;

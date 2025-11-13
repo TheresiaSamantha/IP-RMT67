@@ -3,7 +3,7 @@ import BookDetailModal from "../components/BookDetailModal";
 
 const DetailPage = ({ bookId, initialBook }) => {
   // Props: if you use react-router, read `bookId` from params and fetch details.
-  const [book, setBook] = useState(initialBook ?? null);
+  const [book, _setBook] = useState(initialBook ?? null);
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {

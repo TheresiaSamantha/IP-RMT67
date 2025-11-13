@@ -6,6 +6,14 @@ const {
   afterAll,
 } = require("@jest/globals");
 const request = require("supertest");
+// Mock Sequelize models before importing the app to avoid real DB access during tests
+jest.mock("../models", () => ({
+  Book: {
+    findAndCountAll: jest.fn().mockResolvedValue({ rows: [], count: 0 }),
+  },
+  User: {},
+  myList: {},
+}));
 const app = require("../app");
 
 describe("App routes", () => {
@@ -15,11 +23,12 @@ describe("App routes", () => {
     expect(res.body).toHaveProperty("message");
   });
 
-  test("GET /books should return 200 and array", async () => {
+  test("GET /books should return 200 and paginated payload", async () => {
     const res = await request(app).get("/books");
     expect(res.statusCode).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
-    console.log("🚀 ~ res.body:", res.body);
+    expect(res.body).toHaveProperty("data");
+    expect(Array.isArray(res.body.data)).toBe(true);
+    expect(res.body).toHaveProperty("meta");
   });
 
   //   test("GET /openai should either return 200 or 500 (depends on API key)", async () => {

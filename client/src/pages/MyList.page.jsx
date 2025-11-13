@@ -1,17 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import BookCard from "../components/BookCard";
+import { fetchMyList, removeFromMyList } from "../features/myListSlice";
 
 const MyListPage = () => {
-  const [myList, setMyList] = useState([]);
+  const dispatch = useDispatch();
+  const { items: myList, status, error } = useSelector((s) => s.myList);
 
   useEffect(() => {
-    // TODO: fetch user's saved books from backend: GET /mylist
-    setMyList([]);
-  }, []);
+    dispatch(fetchMyList());
+  }, [dispatch]);
 
   const handleRemove = (id) => {
-    // TODO: call DELETE /mylist/:id and update local state
-    setMyList((s) => s.filter((item) => item.id !== id));
+    dispatch(removeFromMyList(id));
   };
 
   return (
@@ -20,6 +21,11 @@ const MyListPage = () => {
       <p>
         Books you've saved. Implement CRUD actions to add notes, edit or remove.
       </p>
+
+      {status === "loading" && <p>Loading…</p>}
+      {status === "failed" && (
+        <p style={{ color: "crimson" }}>{error || "Failed to load."}</p>
+      )}
 
       {myList.length === 0 ? (
         <p>Your list is empty.</p>
