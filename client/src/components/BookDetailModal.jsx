@@ -1,16 +1,22 @@
 import React, { useState } from "react";
-import { apiKey } from "../helpers/http-client";
+import { useDispatch } from "react-redux";
+import { fetchBookDetail } from "../features/bookSlice";
 
 const BookDetailModal = ({ book, onClose }) => {
+  const dispatch = useDispatch();
   const [summary, setSummary] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const requestSummary = async () => {
     try {
-      const { data } = await apiKey.get(`/books/${book.id}`);
+      setLoading(true);
+      const data = await dispatch(fetchBookDetail(book.id)).unwrap();
       setSummary(data?.aiSummary || "No summary available.");
     } catch (err) {
       setSummary("Failed to load AI summary.");
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -37,6 +43,8 @@ const BookDetailModal = ({ book, onClose }) => {
           maxWidth: 720,
           width: "90%",
           borderRadius: 8,
+          maxHeight: "85vh",
+          overflowY: "auto",
         }}
       >
         <header
@@ -44,6 +52,13 @@ const BookDetailModal = ({ book, onClose }) => {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            position: "sticky",
+            top: 0,
+            background: "#fff",
+            zIndex: 1,
+            paddingBottom: 8,
+            marginBottom: 12,
+            borderBottom: "1px solid #eee",
           }}
         >
           <h2>{book.title}</h2>
@@ -64,12 +79,20 @@ const BookDetailModal = ({ book, onClose }) => {
             </p>
             <p>{book.description}</p>
             <div style={{ marginTop: 12 }}>
-              <button onClick={requestSummary}>Request AI summary</button>
+              <button onClick={requestSummary} disabled={loading}>
+                {loading ? "Requesting…" : "Request AI summary"}
+              </button>
             </div>
           </div>
         </section>
 
-        {summary && (
+        {loading && (
+          <section style={{ marginTop: 12 }}>
+            <p>Generating summary…</p>
+          </section>
+        )}
+
+        {summary && !loading && (
           <section style={{ marginTop: 12 }}>
             <h3>AI Summary</h3>
             <p>{summary}</p>

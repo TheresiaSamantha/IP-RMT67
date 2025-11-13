@@ -19,11 +19,29 @@ export const fetchBooks = createAsyncThunk(
   }
 );
 
+// Thunk: fetch single book detail (and trigger AI summary generation if missing)
+export const fetchBookDetail = createAsyncThunk(
+  "books/fetchBookDetail",
+  async (id, { rejectWithValue }) => {
+    try {
+      const { data } = await apiKey.get(`/books/${id}`);
+      return data; // single book object, includes aiSummary
+    } catch (err) {
+      const message =
+        err?.response?.data?.message ||
+        err.message ||
+        "Failed to fetch book detail";
+      return rejectWithValue(message);
+    }
+  }
+);
+
 const initialState = {
   items: [],
   meta: { total: 0, page: 1, perPage: 12, totalPages: 1 },
   status: "idle", // idle | loading | succeeded | failed
   error: null,
+  details: {}, // cache by id: { data, status, error }
 };
 
 const bookSlice = createSlice({
@@ -57,6 +75,36 @@ const bookSlice = createSlice({
       .addCase(fetchBooks.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload || "Failed to load books";
+      })
+      // Detail fetching
+      .addCase(fetchBookDetail.pending, (state, action) => {
+        const id = action.meta.arg;
+        state.details[id] = state.details[id] || {};
+        state.details[id].status = "loading";
+        state.details[id].error = null;
+      })
+      .addCase(fetchBookDetail.fulfilled, (state, action) => {
+        const book = action.payload;
+        const id = book?.id;
+        if (id != null) {
+          state.details[id] = {
+            status: "succeeded",
+            error: null,
+            data: book,
+          };
+          // If this book exists in items, update it (e.g., aiSummary)
+          const idx = state.items.findIndex((b) => b.id === id);
+          if (idx !== -1) {
+            state.items[idx] = { ...state.items[idx], ...book };
+          }
+        }
+      })
+      .addCase(fetchBookDetail.rejected, (state, action) => {
+        const id = action.meta.arg;
+        state.details[id] = state.details[id] || {};
+        state.details[id].status = "failed";
+        state.details[id].error =
+          action.payload || "Failed to load book detail";
       });
   },
 });
