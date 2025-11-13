@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "node --watch bin/www.js",
     "test": "jest --detectOpenHandles --verbose --silent --forceExit",
+    "test1": "jest --silent --verbose --coverage",
     "migrate": "npx sequelize-cli db:migrate",
     "seed": "npx sequelize-cli db:seed:all",
     "seed:undo": "npx sequelize-cli db:seed:undo:all",
