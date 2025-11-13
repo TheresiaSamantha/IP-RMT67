@@ -27,6 +27,10 @@ const Navbar = () => {
         justifyContent: "space-between",
         padding: "12px 20px",
         borderBottom: "1px solid #eee",
+        position: "sticky",
+        top: 0,
+        background: "#fff",
+        zIndex: 1000,
       }}
     >
       <div style={{ fontWeight: 700 }}>Book Recommender</div>

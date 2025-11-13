@@ -11,6 +11,7 @@ const HomePage = () => {
   const { items, meta, status, error } = useSelector((s) => s.books);
   const token = useSelector((s) => s.user.token);
   const [selected, setSelected] = useState(null);
+  const [toast, setToast] = useState("");
 
   // initial load
   useEffect(() => {
@@ -28,8 +29,41 @@ const HomePage = () => {
     dispatch(fetchBooks({ page: nextPage, limit: meta.perPage }));
   };
 
+  const handleAdded = (result) => {
+    const msg = result?.message || "Added";
+    if (/Already in MyList/i.test(msg)) {
+      setToast("buku sudah ada di list");
+    } else {
+      setToast("buku telah ditambahkan ke My List");
+    }
+    // Auto-hide after 2.5s
+    setTimeout(() => setToast(""), 2500);
+  };
+
   return (
     <main style={{ padding: 20 }}>
+      {toast && (
+        <div
+          style={{
+            position: "fixed",
+            top: 64,
+            left: "50%",
+            transform: "translateX(-50%)",
+            background: "#e6ffed",
+            border: "1px solid #b7f5c9",
+            color: "#065f46",
+            padding: "10px 14px",
+            borderRadius: 8,
+            zIndex: 1100,
+            boxShadow: "0 6px 16px rgba(0,0,0,0.1)",
+            maxWidth: 640,
+            width: "calc(100% - 40px)",
+            textAlign: "center",
+          }}
+        >
+          {toast}
+        </div>
+      )}
       <h1 style={{ marginBottom: 8 }}>Home — Book List</h1>
       <p style={{ color: "#666", marginBottom: 16 }}>
         Explore our collection. Click a book to see details.
@@ -70,7 +104,7 @@ const HomePage = () => {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill,minmax(220px,1fr))",
+              gridTemplateColumns: "repeat(auto-fill,minmax(280px,1fr))",
               gap: 16,
             }}
           >
@@ -80,6 +114,7 @@ const HomePage = () => {
                 book={book}
                 onOpen={setSelected}
                 showAdd={Boolean(token)}
+                onAdded={handleAdded}
               />
             ))}
           </div>

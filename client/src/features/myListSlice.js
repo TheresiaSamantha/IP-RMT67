@@ -58,6 +58,25 @@ export const removeFromMyList = createAsyncThunk(
   }
 );
 
+export const updateMyListNote = createAsyncThunk(
+  "myList/updateNote",
+  async ({ id, note }, { getState, rejectWithValue }) => {
+    try {
+      const headers = withAuth(getState);
+      const { data } = await apiKey.patch(
+        `/mylist/${id}`,
+        { note },
+        { headers }
+      );
+      return data; // { message, data: updatedItem }
+    } catch (err) {
+      const message =
+        err?.response?.data?.message || err.message || "Failed to update note";
+      return rejectWithValue(message);
+    }
+  }
+);
+
 const initialState = {
   items: [],
   status: "idle",
@@ -83,14 +102,23 @@ const myListSlice = createSlice({
         state.error = action.payload;
       })
       .addCase(addToMyList.fulfilled, (state, action) => {
-        // Backend returns created item; push or dedupe
-        const newItem = action.payload;
+        // Backend returns { message, data } where data is the MyList item
+        const newItem = action.payload?.data || action.payload;
+        if (!newItem?.id) return;
         const exists = state.items.some((i) => i.id === newItem.id);
         if (!exists) state.items.push(newItem);
       })
       .addCase(removeFromMyList.fulfilled, (state, action) => {
         const id = action.payload;
         state.items = state.items.filter((i) => i.id !== id);
+      })
+      .addCase(updateMyListNote.fulfilled, (state, action) => {
+        const updated = action.payload?.data || action.payload;
+        if (!updated?.id) return;
+        const idx = state.items.findIndex((i) => i.id === updated.id);
+        if (idx !== -1) {
+          state.items[idx] = { ...state.items[idx], ...updated };
+        }
       });
   },
 });
