@@ -54,6 +54,31 @@ export const registerUser = createAsyncThunk(
   }
 );
 
+// Google login: expects an ID token (credential) from Google Identity Services
+// The server endpoint is POST /login/google with body { googleAccessToken: <id_token> }
+export const googleLogin = createAsyncThunk(
+  "user/googleLogin",
+  async ({ idToken }, { rejectWithValue }) => {
+    try {
+      const { data } = await apiKey.post("/login/google", {
+        googleAccessToken: idToken,
+      });
+      const token = data?.access_token;
+      if (!token) throw new Error("Invalid Google login response");
+      try {
+        localStorage.setItem("token", token);
+      } catch {
+        /* ignore */
+      }
+      return { token };
+    } catch (err) {
+      const message =
+        err?.response?.data?.message || err.message || "Google login failed";
+      return rejectWithValue(message);
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -87,6 +112,18 @@ const userSlice = createSlice({
         state.token = action.payload.token;
       })
       .addCase(loginUser.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(googleLogin.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(googleLogin.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.token = action.payload.token;
+      })
+      .addCase(googleLogin.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       })

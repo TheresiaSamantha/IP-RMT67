@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from "../features/userSlice";
+import { loginUser, googleLogin } from "../features/userSlice";
 import { useNavigate, Link } from "react-router";
 
 const LoginPage = () => {
@@ -9,6 +9,8 @@ const LoginPage = () => {
   const { status, error } = useSelector((s) => s.user);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [googleReady, setGoogleReady] = useState(false);
+  const [googleErr, setGoogleErr] = useState("");
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -17,6 +19,61 @@ const LoginPage = () => {
       navigate("/");
     }
   };
+
+  // Dynamically load Google Identity Services and render the button
+  useEffect(() => {
+    const clientId = import.meta.env?.VITE_GOOGLE_CLIENT_ID;
+    if (!clientId) {
+      setGoogleErr("VITE_GOOGLE_CLIENT_ID tidak ditemukan di .env");
+      return;
+    }
+    const scriptId = "google-identity-services";
+    if (document.getElementById(scriptId)) {
+      setGoogleReady(true);
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    script.defer = true;
+    script.id = scriptId;
+    script.onload = () => setGoogleReady(true);
+    script.onerror = () => setGoogleErr("Gagal memuat Google SDK");
+    document.body.appendChild(script);
+  }, []);
+
+  useEffect(() => {
+    if (!googleReady) return;
+    const clientId = import.meta.env?.VITE_GOOGLE_CLIENT_ID;
+    if (!(window && window.google)) return;
+
+    try {
+      window.google.accounts.id.initialize({
+        client_id: clientId,
+        callback: async (response) => {
+          const idToken = response?.credential;
+          if (!idToken) return;
+          const res = await dispatch(googleLogin({ idToken }));
+          if (res.meta.requestStatus === "fulfilled") {
+            navigate("/");
+          }
+        },
+      });
+      const btn = document.getElementById("googleLoginBtn");
+      if (btn) {
+        window.google.accounts.id.renderButton(btn, {
+          theme: "outline",
+          size: "large",
+          width: 320,
+        });
+      }
+      // Optionally show One Tap
+      // window.google.accounts.id.prompt();
+    } catch (e) {
+      console.error(e);
+      setGoogleErr("Inisialisasi Google gagal");
+    }
+  }, [googleReady, dispatch, navigate]);
 
   return (
     <main style={{ padding: 20, maxWidth: 420, margin: "0 auto" }}>
@@ -54,9 +111,8 @@ const LoginPage = () => {
       </form>
 
       <div style={{ marginTop: 16, display: "grid", gap: 8 }}>
-        <button type="button" disabled title="Google login coming soon">
-          Continue with Google
-        </button>
+        {googleErr && <div style={{ color: "crimson" }}>{googleErr}</div>}
+        <div id="googleLoginBtn" />
         <div style={{ color: "#555" }}>
           Don’t have an account? <Link to="/resister">Create one</Link>
         </div>
