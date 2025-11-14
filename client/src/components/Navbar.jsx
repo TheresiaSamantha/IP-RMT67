@@ -35,14 +35,22 @@ const Navbar = () => {
     >
       <div style={{ fontWeight: 700 }}>Book Review</div>
       <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-        <Link to="/">Home</Link>
+        <Link className="btn btn-secondary" to="/">
+          Home
+        </Link>
         {token ? (
           <>
-            <Link to="/mylist">My List</Link>
-            <button onClick={handleLogout}>Log out</button>
+            <Link className="btn btn-secondary" to="/mylist">
+              My List
+            </Link>
+            <Link className="btn btn-secondary" onClick={handleLogout}>
+              Log out
+            </Link>
           </>
         ) : (
-          <Link to="/login">Login</Link>
+          <Link className="btn btn-secondary" to="/login">
+            Login
+          </Link>
         )}
       </div>
     </nav>
