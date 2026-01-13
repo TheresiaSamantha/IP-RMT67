@@ -62,7 +62,9 @@ const BookDetailModal = ({ book, onClose }) => {
           }}
         >
           <h2>{book.title}</h2>
-          <button onClick={onClose}>Close</button>
+          <button className="btn btn-secondary" onClick={onClose}>
+            Close
+          </button>
         </header>
 
         <section style={{ display: "flex", gap: 16, marginTop: 12 }}>
@@ -79,7 +81,11 @@ const BookDetailModal = ({ book, onClose }) => {
             </p>
             <p>{book.description}</p>
             <div style={{ marginTop: 12 }}>
-              <button onClick={requestSummary} disabled={loading}>
+              <button
+                className="btn btn-secondary"
+                onClick={requestSummary}
+                disabled={loading}
+              >
                 {loading ? "Requesting…" : "Request AI summary"}
               </button>
             </div>

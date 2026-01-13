@@ -105,15 +105,25 @@ const LoginPage = () => {
           />
         </label>
         {error && <div style={{ color: "crimson" }}>{error}</div>}
-        <button type="submit" disabled={status === "loading"}>
+        <button
+          className="btn btn-secondary"
+          type="submit"
+          disabled={status === "loading"}
+        >
           {status === "loading" ? "Signing in…" : "Login"}
         </button>
       </form>
 
       <div style={{ marginTop: 16, display: "grid", gap: 8 }}>
-        {googleErr && <div style={{ color: "crimson" }}>{googleErr}</div>}
-        <div id="googleLoginBtn" />
-        <div style={{ color: "#555" }}>
+        {googleErr && (
+          <div style={{ color: "crimson", textAlign: "center" }}>
+            {googleErr}
+          </div>
+        )}
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <div id="googleLoginBtn" />
+        </div>
+        <div style={{ color: "#555", textAlign: "center" }}>
           Don’t have an account? <Link to="/resister">Create one</Link>
         </div>
       </div>

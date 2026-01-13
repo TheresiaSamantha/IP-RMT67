@@ -115,15 +115,25 @@ const ResisterPage = () => {
           />
         </label>
         {error && <div style={{ color: "crimson" }}>{error}</div>}
-        <button type="submit" disabled={status === "loading"}>
+        <button
+          className="btn btn-secondary"
+          type="submit"
+          disabled={status === "loading"}
+        >
           {status === "loading" ? "Creating…" : "Register"}
         </button>
       </form>
 
       <div style={{ marginTop: 16, display: "grid", gap: 8 }}>
-        {googleErr && <div style={{ color: "crimson" }}>{googleErr}</div>}
-        <div id="googleSignupBtn" />
-        <div style={{ color: "#555" }}>
+        {googleErr && (
+          <div style={{ color: "crimson", textAlign: "center" }}>
+            {googleErr}
+          </div>
+        )}
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <div id="googleSignupBtn" />
+        </div>
+        <div style={{ color: "#555", textAlign: "center" }}>
           Already have an account? <Link to="/login">Login</Link>
         </div>
       </div>

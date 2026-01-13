@@ -37,6 +37,7 @@ const BookCard = ({
         height: 480,
         display: "flex",
         flexDirection: "column",
+        background: "#fff",
       }}
     >
       <div
@@ -109,15 +110,32 @@ const BookCard = ({
           marginTop: "auto",
         }}
       >
-        <button onClick={() => onOpen && onOpen(book)}>Details</button>
-        {showAdd && <button onClick={handleAdd}>Add</button>}
+        <button
+          className="btn btn-secondary"
+          onClick={() => onOpen && onOpen(book)}
+        >
+          Details
+        </button>
+        {showAdd && (
+          <button className="btn btn-secondary" onClick={handleAdd}>
+            Add
+          </button>
+        )}
         {canEditNote && (
-          <button onClick={() => onEditNote && onEditNote(book)}>
+          <button
+            className="btn btn-secondary"
+            onClick={() => onEditNote && onEditNote(book)}
+          >
             Edit note
           </button>
         )}
         {canRemove && (
-          <button onClick={() => onRemove && onRemove(book)}>Remove</button>
+          <button
+            className="btn btn-secondary"
+            onClick={() => onRemove && onRemove(book)}
+          >
+            Remove
+          </button>
         )}
       </div>
     </article>
